@@ -1,0 +1,30 @@
+# === Dependencies (auto-installed, never commit) ===
+node_modules/
+**/node_modules/
+
+# === Local tooling / working dirs (not part of game source) ===
+.workbuddy/
+deploy/
+blog/
+_assets_grabbull/
+_verify/
+
+# === Extracted web build & archives (not requested) ===
+/web/
+web.rar
+
+# === Screenshots / reports at repo root ===
+/*.png
+/*.html
+/*.rar
+
+# === Logs ===
+*.log
+npm-debug.log*
+
+# === OS / editor ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
