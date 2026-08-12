@@ -1,0 +1,22 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/online.css"/>
+
+<div class="list">
+	<h5>在线列表<span>在线总数：<i>{:count($online)}</i></span></h5>
+	<ol>
+		<li>#</li>
+		<li>玩家ID</li>
+		<li>账号</li>
+		<li>金币</li>
+	</ol>
+	<ul>
+		{volist name="online" id="v"}
+		<li>
+			<span>{$i}</span>
+			<span>{$v.userId}</span>
+			<span>{$v.account}</span>
+			<span>{$v.score}</span>
+		</li>
+		{/volist}
+	</ul>
+</div>

@@ -1,0 +1,54 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/wanjia.css"/>
+
+
+
+
+<!-- 搜索 -->
+<div class="sousuo">
+	<form method="post" action="{:url('index/wanjia')}">
+	<input type="text" name="ss" value="{$ss}" placeholder="游戏ID/账号/昵称/手机">
+	<span>搜索</span>
+	</form>
+</div>
+
+
+
+<div class="list">
+	<h5>玩家列表（真实玩家库）</h5>
+	
+
+	<ol>
+		<li>#</li>
+		<li>游戏ID</li>
+		<li>昵称</li>
+		<li>账号</li>
+		<li>金币</li>
+		<li>钻石</li>
+		<li>礼券</li>
+		<li>电话</li>
+		<li>机器人</li>
+		<li>注册时间</li>
+	</ol>
+	<ul>
+		{volist name="list" id="v"}
+		<li>
+			<span>{$i}</span>
+			<span>{$v.Id}</span>
+			<span>{$v.nickname}</span>
+			<span>{$v.Account}</span>
+			<span>{:round($v.score,2)}</span>
+			<span>{$v.diamond}</span>
+			<span>{$v.giftTicket}</span>
+			<span>{$v.phoneNo}</span>
+			<span>{$v.Robot}</span>
+			<span>{$v.AddDate}</span>
+		</li>
+		{/volist}
+	</ul>
+	<div class="page">
+		<a href="{:url('index/wanjia',['p'=>max(1,$p-1),'ss'=>$ss])}">上一页</a>
+		<span>第 {$p}/{$pages} 页（共 {$pages} 页）</span>
+		<a href="{:url('index/wanjia',['p'=>min($pages,$p+1),'ss'=>$ss])}">下一页</a>
+	</div>
+</div>

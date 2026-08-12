@@ -1,0 +1,67 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/coin_zc.css"/>
+
+{neq name="user" value="admin"}
+<div class="list">
+	<h5>注册送开关</h5>
+	<div><span>注册送：</span><i class="{$agent.AgentRegGiveOnOff==1?'kai':''}" AgentRegGiveOnOff="{$agent.AgentRegGiveOnOff}">{$agent.AgentRegGiveOnOff==1?'开启':'关闭'}</i></div>
+	<p style="display:{$agent.AgentRegGiveOnOff==1?'block':'none'}">*每个新玩家后可获<b>0</b>个金币</p>
+</div>
+{/neq}
+
+
+<div class="grout">
+	<h5>发送记录</h5>
+	
+	{eq name="user" value="admin"}
+	<div id="admin">
+		<ol>
+			<li>#</li>
+			<li>代理ID</li>
+			<li>玩家ID</li>
+			<li>金币量</li>
+			<li>发送时间</li>
+		</ol>
+		<ul>
+			{volist name="list" id="v"}
+			<li>
+				<span>{$i}</span>
+				<span>{$v.AgentID}</span>
+				<span>{$v.UserID}</span>
+				<span>{$v.GiveCoin}</span>
+				<span>{$v.time}</span>
+			</li>
+			{/volist}
+		</ul>
+	</div>
+	{/eq}
+
+	{neq name="user" value="admin"}
+	<div id="agent">
+		<ol>
+			<li>#</li>
+			<li>玩家ID</li>
+			<li>金币量</li>
+			<li>发送时间</li>
+		</ol>
+		<ul>
+			{volist name="list" id="v"}
+			<li>
+				<span>{$i}</span>
+				<span>{$v.UserID}</span>
+				<span>{$v.GiveCoin}</span>
+				<span>{$v.time}</span>
+			</li>
+			{/volist}
+		</ul>
+	</div>
+	{/neq}
+	
+	{$list->render()}
+</div>
+
+
+
+{neq name="user" value="admin"}
+<script type="text/javascript" src="/static/index/js/coin_zc.js"></script>
+{/neq}

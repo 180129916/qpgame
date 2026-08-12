@@ -1,0 +1,38 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/shuying.css"/>
+
+<div class="list">
+	<h5>输赢排行<form action="{:url('index/shuying')}" method="get">
+		<select name="type">
+			<option value="0" {$type==0?'selected':''}>无排序</option>
+			<option value="1" {$type==1?'selected':''}>赢-（9-1）</option>
+			<option value="2" {$type==2?'selected':''}>赢-（1-9）</option>
+			<option value="3" {$type==3?'selected':''}>输-（9-1）</option>
+			<option value="4" {$type==4?'selected':''}>输-（1-9）</option>
+		</select>
+	</form></h5>
+
+	<!-- 全部 -->
+	<div id="all">
+		<ol class="list_title">
+			<li>#</li>
+			<li>玩家ID</li>
+			<li>昵称</li>
+			<li>总赢金币</li>
+			<li>总输金币</li>
+		</ol>
+		<ul class="list_content">
+			{volist name="list" id="v"}
+			<li>
+				<span>{$i}</span>
+				<span>{$v._id}</span>
+				<span>{$v.NickName}</span>
+				<span>{$v.WinCoin}</span>
+				<span>{$v.LoseCoin}</span>
+			</li>
+			{/volist}
+		</ul>
+		{$list->render()}
+	</div>
+</div>
+<script type="text/javascript" src="/static/index/js/shuying.js"></script>

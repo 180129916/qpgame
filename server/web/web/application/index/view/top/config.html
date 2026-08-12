@@ -1,0 +1,89 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/config.css"/>
+
+<div class="list">
+	<h5>游戏设置</h5>
+	<ol>
+		<li>#</li>
+		<li>设置内容</li>
+		<li>操作</li>
+	</ol>
+	<ul>
+		
+		<!-- 总后台选项 -->
+		<li class="cf_1">
+			<span>1</span>
+			<span>APP下载地址：<input type="text" name="app_url" value=""></span>
+			<span></span>
+		</li>
+		<li class="cf_1">
+			<span>2</span>
+			<span>APP二维码下载地址：<input type="text" name="img_url" value=""></span>
+			<span></span>
+		</li>
+
+
+
+		<li class="cf_2">
+			<span>★</span>
+			<span>整体-注册账号送<input type="text" name="Num" value="0">分</span>
+			<span></span>
+		</li>
+		<li>
+			<span>★</span>
+			<span>整体-注册验证<input type="hidden" name="注册验证" kaiguan="0"></span>
+			<span><i class="kaiguan">关闭</i></span>
+		</li>
+		<li>
+			<span>★</span>
+			<span>整体-游戏难度<input type="text" name="全局几率" value="0">%</span>
+			<span></span>
+		</li>
+
+
+
+		<!-- 现有游戏：与大厅服 ServerInfo.js 的 GameConfig 一致 -->
+		{volist name="games" id="vo"}
+		<li>
+			<span>{$i}</span>
+			<span>{$vo.GameName}-难度<input type="text" name="{$vo.GameName}" value="0" kaiguan="0" data-game="1">%</span>
+			<span><i class="kaiguan">关闭</i></span>
+		</li>
+		{/volist}
+	</ul>
+	<span class="save">保存</span>
+</div>
+
+
+
+
+<div class="list_2">
+	<h5>短信设置</h5>
+	<ol>
+		<li>#</li>
+		<li>设置内容</li>
+		<li>操作</li>
+	</ol>
+	<ul>
+		<li>
+			<span>1</span>
+			<span>账号</span>
+			<span><input type="text" name="zh" value="{$dx.User}"></span>
+		</li>
+		<li>
+			<span>2</span>
+			<span>密码</span>
+			<span><input type="text" name="mm" value="{$dx.Pass}"></span>
+		</li>
+		<li>
+			<span>3</span>
+			<span>短信送内容</span>
+			<span><input type="text" name="tx" value="{$dx.Txt}"></span>
+		</li>
+	</ul>
+
+	<span class="save">保存</span>
+</div>
+
+
+<script type="text/javascript" src="/static/index/js/config.js"></script>

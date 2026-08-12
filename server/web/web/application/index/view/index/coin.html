@@ -1,0 +1,33 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/coin.css"/>
+
+<div class="list">
+	<h5>金币加减（给玩家发币）</h5>
+	<form method="post" action="{:url('index/coin_in')}">
+	<div><span>玩家ID/账号：</span><input type="text" name="userid" required placeholder="玩家列表中的 Id 或 账号"></div>
+	<div><span>金币量：</span><input type="number" name="coin" required placeholder="整数即可，无下限"></div>
+	<button type="submit">操作</button>
+	</form>
+	<p style="color:#c33;font-size:12px;margin-top:8px;">说明：金币通过游戏服官方通道发放（与真实充值同逻辑）。<b>在线玩家立即到账</b>；在游戏中的玩家<b>退出游戏后</b>生效；离线玩家<b>下次登录游戏</b>生效。无金额下限。</p>
+</div>
+
+<div class="list_1">
+	<h5>金币加减记录</h5>
+	<ol>
+		<li>#</li>
+		<li>玩家ID</li>
+		<li>金额</li>
+		<li>时间</li>
+	</ol>
+	<ul>
+		{volist name="list" id="v"}
+		<li id="{$v._id}">
+			<span>{$i}</span>
+			<span>{$v.UserID}</span>
+			<span>{$v.Coin}</span>
+			<span>{$v.time}</span>
+		</li>
+		{/volist}
+	</ul>
+	{$list->render()}
+</div>

@@ -1,0 +1,134 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/index.css"/>
+
+
+<!-- 数据1 -->
+<ul class="shuju_1">
+	{neq name="user" value="admin"}
+	<li>
+		<div>
+			<p>{$dl.Money}</p>
+			<p>余额</p>
+		</div>
+		<i class="fa fa-plus"></i>
+		<p>获取最新<i class="fa fa-refresh"></i></p>
+	</li>
+	{/neq}
+
+	<li {$user=='admin'?'style="width:49.35%"':''}>
+		<div>
+			<p>{$count_dl}</p>
+			<p>代理总数</p>
+		</div>
+		<i class="fa fa-plus"></i>
+		<p>获取最新<i class="fa fa-refresh"></i></p>
+	</li>
+	<li {$user=='admin'?'style="width:49.35%"':''}>
+		<div>
+			<p>{$count_wj}</p>
+			<p>玩家总数</p>
+		</div>
+		<i class="fa fa-plus"></i>
+		<p>获取最新<i class="fa fa-refresh"></i></p>
+	</li>
+</ul>
+<!-- 数据2 -->
+<ul class="shuju_2">
+	<li>
+		<i class="fa fa-star-o"></i>
+		<div>
+			<p>今天游戏总赢钱</p>
+			<p>{$ri_1-$ri_2}</p>
+			<p>获取最新<i class="fa fa-refresh"></i></p>
+		</div>
+	</li>
+	<li>
+		<i class="fa fa-star-o"></i>
+		<div>
+			<p>当月游戏总赢钱</p>
+			<p>{$yue_1-$yue_2}</p>
+			<p>获取最新<i class="fa fa-refresh"></i></p>
+		</div>
+	</li>
+	<li>
+		<i class="fa fa-star-o"></i>
+		<div>
+			<p>当月短信送</p>
+			<p>{$song}</p>
+			<p>获取最新<i class="fa fa-refresh"></i></p>
+		</div>
+	</li>
+</ul>
+<!-- 盈利曲线 -->
+<div class="yyquxian">
+	<h5><i class="fa fa-chevron-circle-right"></i>盈利查询</h5>
+	<div>
+		<span>开始日期</span>
+		<input type="date" name="sta">	
+	</div>
+	<div>
+		<span>结束日期</span>
+		<input type="date" name="end">
+	</div>
+	
+	<button type="{$user}">查询</button>
+</div>
+
+
+<div class="quxian">
+	<h5>游戏盈利曲线</h5>
+	<div id="graph">
+		<canvas id="JSChart_graph" width="1000" height="400" style="width: 1000px; height: 400px; position: relative;"></canvas>
+	</div>
+</div>
+
+<div class="shuju_yx">
+	<h5>游戏盈利列表<i>总：0</i></h5>
+	<ol>
+		<li>日期</li>
+		<li>盈利</li>
+	</ol>
+	<ul>
+		<!-- <li>
+			<span>2019-12-12</span>
+			<span>11111</span>
+		</li> -->
+	</ul>
+</div>
+
+
+<div class="shuju_dx">
+	<h5>短信送列表<i>总：0</i></h5>
+	<ol>
+		<li>日期</li>
+		<li>金币</li>
+	</ol>
+	<ul>
+		<!-- <li>
+			<span>2019-12-12</span>
+			<span>11111</span>
+		</li> -->
+	</ul>
+</div>
+
+
+<div class="shuju_zc">
+	<h5>注册送列表<i>总：0</i></h5>
+	<ol>
+		<li>日期</li>
+		<li>金币</li>
+	</ol>
+	<ul>
+		<!-- <li>
+			<span>2019-12-12</span>
+			<span>11111</span>
+		</li> -->
+	</ul>
+</div>
+
+
+
+
+
+<script type="text/javascript" src="/static/index/js/jscharts.js"></script>
+<script type="text/javascript" src="/static/index/js/index.js"></script>

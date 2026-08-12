@@ -1,0 +1,62 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/gonggao.css"/>
+
+{eq name="user" value="admin"}
+<div class="list">
+	<h5>公告<form action="{:url('top/gonggao')}" method="get">
+		<select name="type">
+			<option value="yx" {$type=='yx'?'selected':''}>游戏公告</option>
+			<option value="dl" {$type=='dl'?'selected':''}>代理公告</option>
+			<option value="pm" {$type=='pm'?'selected':''}>跑马公告</option>
+		</select>
+	</form><span>添加公告</span></h5>
+	<ol class="list_title">
+		<li>#</li>
+		<li>公告内容</li>
+		<li>操作</li>
+	</ol>
+	<ul class="list_content">
+		{volist name="list" id="v"}
+		<li>
+			<span>{$i}</span>
+			<span>
+				<div><i>题目</i><input type="text" name="title" value="{$v.title}"></div>
+				<div><i>内容</i><textarea name="GongGao">{$v.GongGao}</textarea></div>
+				<div>{$v.time}</div>
+			</span>
+			<span><i class="save" id="{$v._id}">保存</i><i class="del" id="{$v._id}">删除</i></span>
+		</li>
+		{/volist}
+	</ul>
+	{$list->render()}
+</div>
+{/eq}
+
+
+
+{neq name="user" value="admin"}
+<div class="agent">
+	<h5>公告</h5>
+	<ol>
+		<li>#</li>
+		<li>公告内容</li>
+		<li>时间</li>
+	</ol>
+	<ul>
+		{volist name="list" id="v"}
+		<li>
+			<span>{$i}</span>
+			<span>{$v.GongGao}</span>
+			<span>{$v.time}</span>
+		</li>
+		{/volist}
+	</ul>
+	{$list->render()}
+</div>
+{/neq}
+
+
+
+{eq name="user" value="admin"}
+<script type="text/javascript" src="/static/index/js/gonggao.js"></script>
+{/eq}

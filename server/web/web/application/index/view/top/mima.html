@@ -1,0 +1,13 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/houtai.css"/>
+
+<div class="list">
+	<h5>修改密码<a href="{:url('top/houtai')}">账号信息</a></h5>
+	<div><span>账号名：</span><input type="text" disabled value="{$Agentaccount}"></div>
+	<div><span>原密码：</span><input type="password" name="old_pwd"></div>
+	<div><span>新密码：</span><input type="password" name="new_pwd"></div>
+	<div><span>确认密码：</span><input type="password" name="new_pwd_c"></div>
+	<button>保存</button>
+</div>
+
+<script type="text/javascript" src="/static/index/js/mima.js"></script>

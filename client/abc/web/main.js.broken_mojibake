@@ -1,0 +1,317 @@
+// === MOJIBAKE FIX for cc.Label (v3) ===
+// Cocos2d engine 把中文 JS 字符串错误地存为 UTF-8 字节当 Latin-1 字符的 mojibake 形式
+// (即 unescape(encodeURIComponent(s)) 的结果):
+//   原始 "欢迎" (UTF-8: e6 ac a2 e8 bf 8e) -> Latin-1 字符 [æ¬¢è¿Ž]
+// 有些字符 (如 0x89 HTS) 会被进一步替换为 0x2030 (‰)
+// 修复: 检测含 0x80-0xFF 范围 Latin-1 字符 且 不含正常中文 (0x4E00-0x9FFF) 的字符串,
+//       把所有码元 charCodeAt 当 1 字节, UTF-8 decode
+(function() {
+  document.title = 'QPGAME_v3';
+  console.log('[MOJIBAKE FIX v4] loaded - if you see this in console, new main.js is running');
+  // mojibake "指纹" -> 原始 Latin-1 byte
+  // cocos2d / V8 在某些路径上会归一化控制字符 (0x80-0x9F), 映射到看起来类似的 Latin Extended-A/B
+  // 0x2030 (‰) 是 0x89 (HTS) 的常见归一
+  // 0x017D (Ž) 是 0x8E (HTS) 的归一
+  // 0x017E (ž) 是 0x9E (HTS) 的归一
+  // 0x02C6 (ˆ) 是 0x88 (HTS) 的归一
+  // 0x2014 (—) 是 0x94 (?) 的归一
+  // Windows-1252 / V8 归一化映射：JS unescape 会把 0x80-0x9F 控制字节变成这些可见字符
+  var ALIAS = {
+    0x20AC: 0x80, // €
+    0x201A: 0x82, // ‚
+    0x0192: 0x83, // ƒ
+    0x201E: 0x84, // „
+    0x2026: 0x85, // …
+    0x2020: 0x86, // †
+    0x2021: 0x87, // ‡
+    0x02C6: 0x88, // ˆ
+    0x2030: 0x89, // ‰
+    0x0160: 0x8A, // Š
+    0x2039: 0x8B, // ‹
+    0x0152: 0x8C, // Œ
+    0x017D: 0x8E, // Ž
+    0x2018: 0x91, // ‘
+    0x2019: 0x92, // ’
+    0x201C: 0x93, // “
+    0x201D: 0x94, // ”
+    0x2022: 0x95, // •
+    0x2013: 0x96, // –
+    0x2014: 0x97, // —
+    0x02DC: 0x98, // ˜
+    0x2122: 0x99, // ™
+    0x0161: 0x9A, // š
+    0x203A: 0x9B, // ›
+    0x0153: 0x9C, // œ
+    0x017E: 0x9E, // ž
+    0x0178: 0x9F  // Ÿ
+  };
+  function fixMojibake(s) {
+    if (typeof s !== 'string' || s.length < 3) return s;
+    var hasLatin1 = false;
+    for (var i = 0; i < s.length; i++) {
+      var cp = s.charCodeAt(i);
+      if (cp >= 0x4E00 && cp <= 0x9FFF) return s;  // 已是正常中文, 不修
+      if (cp >= 0x80 && cp <= 0xFF) hasLatin1 = true;
+    }
+    if (!hasLatin1) return s;
+    // Latin Extended-A 范围 (0x100-0x17F) 也需要展开 (UTF-8 编码)
+    var hasLatinExt = false;
+    for (var j = 0; j < s.length; j++) {
+      var cp2 = s.charCodeAt(j);
+      if (cp2 >= 0x100 && cp2 <= 0x17F) { hasLatinExt = true; break; }
+    }
+    // 重建字节流
+    var bytes = [];
+    for (var k = 0; k < s.length; k++) {
+      var cp3 = s.charCodeAt(k);
+      if (ALIAS[cp3] !== undefined) { bytes.push(ALIAS[cp3]); continue; }
+      if (cp3 >= 0x100 && cp3 <= 0x17F) {
+        // Latin Extended-A 字符 -> 重新 UTF-8 编码 (2 字节)
+        var enc = new TextEncoder().encode(String.fromCharCode(cp3));
+        for (var m = 0; m < enc.length; m++) bytes.push(enc[m]);
+        continue;
+      }
+      if (cp3 > 0xFF) return s;  // 含其他 high unicode, 不修
+      bytes.push(cp3);
+    }
+    try {
+      // fatal:false：即使末尾混有无效单字节（如 ® 占位符），也能把前面有效中文解出来
+      return new TextDecoder('utf-8', {fatal: false}).decode(new Uint8Array(bytes));
+    } catch (e) { return s; }
+  }
+  function scanAndFix() {
+    try {
+      if (typeof cc === 'undefined' || !cc.director || !cc.Label) return;
+      var scene = cc.director.getScene();
+      if (!scene) return;
+      var labels = scene.getComponentsInChildren(cc.Label);
+      for (var i = 0; i < labels.length; i++) {
+        var s = labels[i].string;
+        if (typeof s === 'string' && s.length >= 3) {
+          var fixed = fixMojibake(s);
+          if (fixed !== s) {
+            try { labels[i].string = fixed; } catch (e) {}
+          }
+        }
+      }
+    } catch (e) {}
+  }
+  // 暴露给调试/自动化测试使用
+  window.__fixMojibake = fixMojibake;
+
+  function installHook() {
+    if (typeof cc === 'undefined' || !cc.Label) return;
+    var proto = cc.Label.prototype;
+    if (!proto || proto.__mojibakeHooked) return;
+    proto.__mojibakeHooked = true;
+    // 1) hook setString 方法
+    if (proto.setString) {
+      var origSet = proto.setString;
+      proto.setString = function(t) {
+        return origSet.call(this, fixMojibake(t));
+      };
+    }
+    // 2) hook string setter (项目代码用 lbl.string = "良好" 形式)
+    try {
+      var desc = Object.getOwnPropertyDescriptor(proto, 'string');
+      if (desc && desc.set && desc.configurable) {
+        var origSetter = desc.set;
+        Object.defineProperty(proto, 'string', {
+          get: desc.get,
+          set: function(t) { origSetter.call(this, fixMojibake(t)); },
+          configurable: true,
+          enumerable: desc.enumerable
+        });
+      }
+    } catch (e) {}
+    console.log('[MOJIBAKE FIX] cc.Label hook installed');
+    // 3) 立即扫一次
+    setTimeout(scanAndFix, 200);
+  }
+  // 等 cc 加载
+  var tryInstall = setInterval(function() {
+    if (typeof cc !== 'undefined' && cc.Label) {
+      clearInterval(tryInstall);
+      installHook();
+    }
+  }, 50);
+  // 持续扫, 防止有新 Label 创建
+  setInterval(scanAndFix, 300);
+})();
+
+(function () {
+
+    'use strict';
+
+    function boot () {
+
+        var settings = window._CCSettings;
+        window._CCSettings = undefined;
+
+        if ( !settings.debug ) {
+            // retrieve minified raw assets
+            var rawAssets = settings.rawAssets;
+            var assetTypes = settings.assetTypes;
+            for (var mount in rawAssets) {
+                var entries = rawAssets[mount];
+                for (var uuid in entries) {
+                    var entry = entries[uuid];
+                    var type = entry[1];
+                    if (typeof type === 'number') {
+                        entry[1] = assetTypes[type];
+                    }
+                }
+            }
+        }
+
+        // init engine
+        var canvas;
+
+        if (cc.sys.isBrowser) {
+            canvas = document.getElementById('GameCanvas');
+        }
+
+        function setLoadingDisplay () {
+            // Loading splash scene
+            var splash = document.getElementById('splash');
+            var progressBar = splash.querySelector('.progress-bar span');
+            cc.loader.onProgress = function (completedCount, totalCount, item) {
+                var percent = 100 * completedCount / totalCount;
+                if (progressBar) {
+                    progressBar.style.width = percent.toFixed(2) + '%';
+                }
+            };
+            splash.style.display = 'block';
+            progressBar.style.width = '0%';
+
+            cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, function () {
+                splash.style.display = 'none';
+            });
+        }
+
+        var onStart = function () {
+            cc.view.resizeWithBrowserSize(true);
+            // UC browser on many android devices have performance issue with retina display
+            if (cc.sys.os !== cc.sys.OS_ANDROID || cc.sys.browserType !== cc.sys.BROWSER_TYPE_UC) {
+                cc.view.enableRetina(true);
+            }
+            //cc.view.setDesignResolutionSize(settings.designWidth, settings.designHeight, cc.ResolutionPolicy.SHOW_ALL);
+
+            if (cc.sys.isBrowser) {
+                setLoadingDisplay();
+            }
+
+            if (cc.sys.isMobile) {
+                if (settings.orientation === 'landscape') {
+                    cc.view.setOrientation(cc.macro.ORIENTATION_LANDSCAPE);
+                }
+                else if (settings.orientation === 'portrait') {
+                    cc.view.setOrientation(cc.macro.ORIENTATION_PORTRAIT);
+                }
+                // qq, wechat, baidu
+                cc.view.enableAutoFullScreen(
+                    cc.sys.browserType !== cc.sys.BROWSER_TYPE_BAIDU &&
+                    cc.sys.browserType !== cc.sys.BROWSER_TYPE_WECHAT &&
+                    cc.sys.browserType !== cc.sys.BROWSER_TYPE_MOBILE_QQ
+                );
+            }
+
+            // Limit downloading max concurrent task to 2, 
+            // more tasks simultaneously may cause performance draw back on some android system / brwosers.
+            // You can adjust the number based on your own test result, you have to set it before any loading process to take effect.
+            if (cc.sys.isBrowser && cc.sys.os === cc.sys.OS_ANDROID) {
+                cc.macro.DOWNLOAD_MAX_CONCURRENT = 2;
+            }
+
+            // init assets
+            cc.AssetLibrary.init({
+                libraryPath: 'res/import',
+                rawAssetsBase: 'res/raw-',
+                rawAssets: settings.rawAssets,
+                packedAssets: settings.packedAssets
+            });
+
+            var launchScene = settings.launchScene;
+
+            // load scene
+            if (cc.runtime) {
+                cc.director.setRuntimeLaunchScene(launchScene);
+            }
+            cc.director.loadScene(launchScene, null,
+                function () {
+                    if (cc.sys.isBrowser) {
+                        // show canvas
+                        canvas.style.visibility = '';
+                        var div = document.getElementById('GameDiv');
+                        if (div) {
+                            div.style.backgroundImage = '';
+                        }
+                    }
+                    cc.loader.onProgress = null;
+
+                    // play game
+                    // cc.game.resume();
+
+                    console.log('Success to load scene: ' + launchScene);
+                }
+            );
+        };
+
+        // jsList
+        var jsList = settings.jsList;
+        var bundledScript = settings.debug ? 'project.dev.js'/*tpa=http://www.f18885.com:13000/abc/web/project.dev.js*/ : 'project.js'/*tpa=http://www.f18885.com:13000/abc/web/project.js*/;
+        if (jsList) {
+            jsList.push(bundledScript);
+        }
+        else {
+            jsList = [bundledScript];
+        }
+
+        // anysdk scripts
+        if (cc.sys.isNative && cc.sys.isMobile) {
+            jsList = jsList.concat(['jsb_anysdk.js'/*tpa=http://www.f18885.com:13000/abc/web/jsb_anysdk.js*/, 'jsb_anysdk_constants.js'/*tpa=http://www.f18885.com:13000/abc/web/jsb_anysdk_constants.js*/]);
+        }
+
+        jsList = jsList.map(function (x) { return 'src/' + x; });
+
+        var option = {
+            //width: width,
+            //height: height,
+            id: 'GameCanvas',
+            scenes: settings.scenes,
+            debugMode: settings.debug ? cc.DebugMode.INFO : cc.DebugMode.ERROR,
+            showFPS: settings.debug,
+            frameRate: 60,
+            jsList: jsList,
+            groupList: settings.groupList,
+            collisionMatrix: settings.collisionMatrix,
+            renderMode: 0
+        };
+
+        cc.game.run(option, onStart);
+    }
+
+    if (window.document) {
+        var splash = document.getElementById('splash');
+        splash.style.display = 'block';
+
+        var cocos2d = document.createElement('script');
+        cocos2d.async = true;
+        cocos2d.src = window._CCSettings.debug ? 'cocos2d-js.js'/*tpa=http://www.f18885.com:13000/abc/web/cocos2d-js.js*/ : 'cocos2d-js-min.js'/*tpa=http://www.f18885.com:13000/abc/web/cocos2d-js-min.js*/;
+
+        var engineLoaded = function () {
+            document.body.removeChild(cocos2d);
+            cocos2d.removeEventListener('load', engineLoaded, false);
+            boot();
+        };
+        cocos2d.addEventListener('load', engineLoaded, false);
+        document.body.appendChild(cocos2d);
+    }
+    else if (window.jsb) {
+        require('src/settings.js'/*tpa=http://www.f18885.com:13000/abc/web/src/settings.js*/);
+        require('src/jsb_polyfill.js'/*tpa=http://www.f18885.com:13000/abc/web/src/jsb_polyfill.js*/);
+
+        boot();
+    }
+
+})();

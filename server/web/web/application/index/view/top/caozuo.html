@@ -1,0 +1,22 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/caozuo.css"/>
+
+<div class="list">
+	<h5>操作记录</h5>
+	<ol>
+		<li>#</li>
+		<li>描述</li>
+		<li>日期时间</li>
+	</ol>
+	<ul>
+		{volist name="list" id="v"}
+		<li>
+			<span>{$i}</span>
+			<span>{$v.Content}</span>
+			<span>{$v.Time}</span>
+		</li>
+		{/volist}
+	</ul>
+	
+	{$list->render()}
+</div>

@@ -1,0 +1,49 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/tixian.css"/>
+
+<div class="list">
+	<h5>提现列表</h5>
+
+	<!-- 全部 -->
+	<div id="all">
+		<ol class="list_title">
+			<li>#</li>
+			<li>订单号</li>
+			<li>玩家ID</li>
+			<li>类型</li>
+			<li>收款账号-姓名</li>
+			<li>金币</li>
+			<li>申请时间</li>
+			<li>状态</li>
+			<li>操作</li>
+		</ol>
+		<ul class="list_content">
+			{volist name="list" id="v"}
+			<li>
+				<span>{$i}</span>
+				<span>{$v.orderid}</span>
+				<span>{$v.UserId}</span>
+				<span>{$v.PayType}</span>
+				<span>{$v.Bank_accname}-{$v.BankName}</span>
+				<span>
+					<b class="{$v.State==0?'red':'green'}">{$v.coin}</b>
+				</span>
+				<span>{$v.time}</span>
+				<span>
+					{eq name="v.State" value="0"}申请中{/eq}
+					{eq name="v.State" value="1"}已拒绝{/eq}
+					{eq name="v.State" value="2"}已同意{/eq}
+				</span>
+				<span id="{$v._id}">
+					{eq name="v.State" value="0"}
+					<i class="ty">同意</i>
+					<i class="jj" userid="{$v.UserId}" coin="{$v.coin}">拒绝</i>
+					{/eq}
+				</span>
+			</li>
+			{/volist}
+		</ul>
+		{$list->render()}
+	</div>
+</div>
+<script type="text/javascript" src="/static/index/js/tixian.js"></script>

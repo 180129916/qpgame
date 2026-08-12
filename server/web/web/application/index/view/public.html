@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>后台</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui"/>
+
+	<link rel="icon" type="image/png" href="/static/public/nosna.png"/>
+	<link rel="stylesheet" type="text/css" href="/static/public/css/res.css"/>
+	<link rel="stylesheet" type="text/css" href="/static/index/css/public.css"/>
+
+	<link rel="stylesheet" type="text/css" href="/static/public/awesome/css/font-awesome.min.css"/>
+
+	<script type="text/javascript" src="/static/public/js/jquery-1.11.0.min.js"></script>
+</head>
+<body>
+	<!-- 左侧菜单 -->
+	<ul id="menu">
+		<li><i class="fa fa-cogs"></i>后台管理</li>
+
+		<li><a href="{:url('index/index')}" class="{$Request.action=='index'?'menu_select':''}"><i class="fa fa-line-chart"></i>报表统计</a></li>
+		<li><a href="{:url('index/shuying')}" class="{$Request.action=='shuying'?'menu_select':''}"><i class="fa fa-sort-numeric-asc"></i>输赢排行</a></li>
+
+		<li><a href="{:url('index/online')}" class="{$Request.action=='online'?'menu_select':''}"><i class="fa fa-user"></i>在线列表</a></li>
+		<li><a href="{:url('index/daili')}" class="{$Request.action=='daili'?'menu_select':''}"><i class="fa fa-users"></i>代理列表</a></li>
+		<li><a href="{:url('index/wanjia')}" class="{$Request.action=='wanjia'?'menu_select':''}"><i class="fa fa-users"></i>玩家列表</a></li>
+		
+		{eq name="user" value="admin"}
+		<li><a href="{:url('index/coin')}" class="{$Request.action=='coin'?'menu_select':''}"><i class="fa fa-users"></i>金币加减</a></li>
+		<li><a href="{:url('index/zhuanyi')}" class="{$Request.action=='zhuanyi'?'menu_select':''}"><i class="fa fa-exchange"></i>账号转移</a></li>
+
+		<li><a href="{:url('index/tixian')}" class="{$Request.action=='tixian' || $Request.action=='tixian'?'menu_select':''}"><i class="fa fa-retweet"></i>玩家提现</a></li>
+		{/eq}
+
+		
+		<li><a href="{:url('index/coin_zc')}" class="{$Request.action=='coin_zc'?'menu_select':''}"><i class="fa fa-comment-o"></i>注册送</a></li>
+
+		<li><a href="{:url('index/coin_dx_sq')}" class="{$Request.action=='coin_dx_sq'?'menu_select':''}"><i class="fa fa-comment-o"></i>短信送-申请</a></li>
+
+		<li><a href="{:url('index/coin_dx_fs')}" class="{$Request.action=='coin_dx_fs'?'menu_select':''}"><i class="fa fa-comment-o"></i>短信送-发送</a></li>
+
+	</ul>
+
+	<!-- 头部菜单 -->
+	<div id="tou">
+		<a href="{:url('top/gonggao')}" class="{$Request.action=='gonggao'?'tou_select':''}">平台公告</a>
+		<span>|</span>
+		<a href="{:url('top/houtai')}" class="{$Request.action=='houtai' || $Request.action=='mima'?'tou_select':''}">后台账号</a>
+		<span>|</span>
+		<a href="{:url('top/caozuo')}" class="{$Request.action=='caozuo'?'tou_select':''}">操作记录</a>
+		{eq name="user" value="admin"}
+		<span>|</span>
+		<a href="{:url('top/config')}" class="{$Request.action=='config'?'tou_select':''}">游戏设置</a><!--包含”支付通道“-->
+		{/eq}
+		<span>|</span>
+		<a href="{:url('login/login_out')}">退出</a>
+		<i id="zong_shuaxin" class="fa fa-rotate-right right_tool_icon"></i>
+	</div>
+
+
+	<div id="content">
+		<div>
+			{__CONTENT__}
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		var pw="{:md5(date('Ymd',time()).'123123')}";
+	</script>
+	<script type="text/javascript" charset="utf-8" src="/static/index/js/public.js"></script>
+</body>
+</html>

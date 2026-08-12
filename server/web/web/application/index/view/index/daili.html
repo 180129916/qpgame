@@ -1,0 +1,181 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/daili.css"/>
+
+
+
+
+<!-- 搜索 -->
+<div class="sousuo">
+	<form method="post" action="{:url('index/daili')}">
+	<input type="text" name="ss" value="{$ss}" placeholder="账号/银行号/手机号/QQ/微信号/……">
+	<span>搜索</span>
+	</form>
+</div>
+
+
+
+<div class="list">
+	<h5>代理列表<span>新增</span></h5>
+	
+	{eq name="user" value="admin"}
+	<div id="admin">
+		<ol>
+			<li>#</li>
+			<li>昵称</li>
+			<li>代理账号</li>
+			<li>推广码</li>
+			<li>统计</li>
+			<li>代理量</li>
+			<li>玩家量</li>
+			<li>占成比例%</li>
+			<li>账号信息</li>
+		</ol>
+		<ul>
+			{volist name="list" id="v"}
+			<li>
+				<span>{$i}</span>
+				<span>{$v.nicheng}</span>
+				<span>
+					<p>ID号：{$v._id}</p>
+					<p>账号：{$v.Agentaccount}</p>
+					<p>上级ID：{$v.SuperiorID}</p>
+				</span>
+				<span>{$v.PromoCode}</span>
+				<span><i class="tj_bb" id="{$v._id}">报表</i></span>
+				<span>{$dl[$v['_id']]}</span>
+				<span>{$wj[$v['_id']]}</span>
+				<span><input type="text" id="{$v._id}" divide="{$v.Divide}" value="{$v.Divide}"></span>
+				<span>
+					<p>银行账号：{$v.Bank}</p>
+					<p>开户名称：{$v.OpenName}</p>
+					<p>开户姓名：{$v.Name}</p>
+					<p>微信：{$v.Wechat}</p>
+					<p>QQ号：{$v.QQ}</p>
+					<p>电话：{$v.TEL}</p>
+				</span>
+			</li>
+			{/volist}
+		</ul>
+	</div>
+	{/eq}
+
+	{neq name="user" value="admin"}
+	<div id="agent">
+		<ol>
+			<li>#</li>
+			<li>昵称</li>
+			<li>代理账号</li>
+			<li>推广码</li>
+			<li>统计</li>
+			<li>代理量</li>
+			<li>玩家量</li>
+			<li>占成比例%</li>
+		</ol>
+		<ul>
+			{volist name="list" id="v"}
+			<li>
+				<span>{$i}</span>
+				<span>{$v.nicheng}</span>
+				<span>{$v.Agentaccount}</span>
+				<span>{$v.PromoCode}</span>
+				<span><i class="tj_bb" id="{$v._id}">报表</i></span>
+				<span>{$v.dl}</span>
+				<span>{$v.wj}</span>
+				<span><input type="text" id="{$v._id}" divide="{$v.Divide}" value="{$v.Divide}"></span>
+			</li>
+			{/volist}
+		</ul>
+	</div>
+	{/neq}
+
+	{$list->render()}
+</div>
+
+
+
+<div id="add">
+	<div id="add_content">
+		<h4>新增代理<i class="fa fa-close"></i></h4>
+		<div>
+			<div>
+				<span>登录账号</span>
+				<input type="text" name="Agentaccount">
+			</div>
+			<div>
+				<span>登录密码</span>
+				<input type="password" name="password">
+			</div>
+			<div>
+				<span>密码确认</span>
+				<input type="password" name="password_qr">
+			</div>
+			<div>
+				<span>推荐码</span>
+				<input type="text" name="PromoCode">
+			</div>
+			<div>
+				<span>占成比例</span>
+				<input type="number" name="Divide" placeholder="整数，0-100">
+			</div>
+			<button>新增</button>
+		</div>
+	</div>
+</div>
+
+
+
+<div id="baobiao">
+	<div id="baobiao_content">
+		<h4>报表查询<i class="fa fa-close"></i></h4>
+		<div>
+			<div>
+				<span>代理ID</span>
+				<input type="text" name="id" disabled value="">
+			</div>
+			<div>
+				<span>开始日期</span>
+				<input type="date" name="sta">	
+			</div>
+			<div>
+				<span>结束日期</span>
+				<input type="date" name="end">
+			</div>
+			<button>查询</button>
+		</div>
+		<span>
+			<span class="yx">
+				<h5>游戏数据<i>总：0</i></h5>
+				<ol>
+					<li>日期</li>
+					<li>盈利</li>
+				</ol>
+				<ul>
+					<!-- <li><span>2019-12-12</span><span>1232</span></li> -->
+				</ul>
+			</span>
+			<span class="dx">
+				<h5>短信送<i>总：0</i></h5>
+				<ol>
+					<li>日期</li>
+					<li>金币</li>
+				</ol>
+				<ul>
+					<!-- <li><span>2019-12-12</span><span>1232</span></li> -->
+				</ul>
+			</span>
+			<span class="zc">
+				<h5>注册送<i>总：0</i></h5>
+				<ol>
+					<li>日期</li>
+					<li>金币</li>
+				</ol>
+				<ul>
+					<!-- <li><span>2019-12-12</span><span>1232</span></li> -->
+				</ul>
+			</span>
+		</span>
+	</div>
+</div>
+
+
+<script type="text/javascript" src="/static/index/js/daili.js"></script>

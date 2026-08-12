@@ -1,0 +1,162 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/coin_dx.css"/>
+
+
+{eq name="user" value="admin"}
+<!-- 总后台-送金项目 -->
+<div id="list_1">
+	<h5>短信送金额<span>新增</span></h5>
+	<ol>
+		<li>#</li>
+		<li>金额</li>
+		<li>操作</li>
+	</ol>
+	<ul>
+		{volist name="coin" id="v"}
+		<li id="{$v._id}">
+			<span>{$i}</span>
+			<span><input class="coin" type="number" coin="{$v.Coin}" value="{$v.Coin}"></span>
+			<span>
+				<i class="del">删除</i>
+			</span>
+		</li>
+		{/volist}
+	</ul>
+</div>
+
+
+<!-- 总后台-申请记录 -->
+<div id="list_4">
+	<h5>申请列表</h5>
+	<ol>
+		<li>#</li>
+		<li>代理ID</li>
+		<li>申请金额</li>
+		<li>申请数量</li>
+		<li>金币总数</li>
+		<li>申请时间</li>
+		<li>状态</li>
+		<li>操作</li>
+	</ol>
+	<ul>
+		{volist name="sq" id="v"}
+		{php}
+		$sms_coin=0;
+		foreach($coin as $u){
+			if($u['_id']==$v['SmsCoinConfigID']){
+				$sms_coin=$u['Coin'];
+			}
+		}
+		{/php}
+		<li id="{$v._id}">
+			<span>{$i}</span>
+			<span>{$v.AgentID}</span>
+			<span>{$sms_coin}</span>
+			<span>{$v.Number}</span>
+			<span>{$v.Number*$sms_coin}</span>
+			<span>{$v.Time}</span>
+			<span>
+				{eq name="v.State" value="0"}待审核{/eq}
+				{eq name="v.State" value="1"}拒绝{/eq}
+				{eq name="v.State" value="2"}同意{/eq}
+			</span>
+			<span>
+				{eq name="v.State" value="0"}
+					<i class="ty">同意</i>
+					<i class="jj">拒绝</i>
+				{/eq}
+				{eq name="v.State" value="1"}<i class="ty">同意</i>{/eq}
+				{eq name="v.State" value="2"}<i class="jj">拒绝</i>{/eq}
+			</span>
+		</li>
+		{/volist}
+	</ul>
+	{$sq->render()}
+</div>
+{/eq}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{neq name="user" value="admin"}
+<!-- 代后台-申请 -->
+<div id="list_5">
+	<h5>短信送金额</h5>
+	<ol>
+		<li>#</li>
+		<li>金额</li>
+		<li>申请数量</li>
+		<li>操作</li>
+	</ol>
+	<ul>
+		{volist name="coin" id="v"}
+		<li id="{$v._id}">
+			<span>{$i}</span>
+			<span>{$v.Coin}</span>
+			<span><input type="number"></span>
+			<span><i class="sq">申请</i></span>
+		</li>
+		{/volist}
+	</ul>
+</div>
+
+<!-- 代后台-申请记录 -->
+<div id="list_6">
+	<h5>短信送申请记录</h5>
+	<ol>
+		<li>#</li>
+		<li>金额</li>
+		<li>申请数量</li>
+		<li>状态</li>
+	</ol>
+	<ul>
+		{volist name="sq" id="v"}
+		{php}
+		foreach($coin as $u){
+			if($u['_id']==$v['SmsCoinConfigID']){
+				$sms_coin=$u['Coin'];
+			}
+		}
+		{/php}
+		<li>
+			<span>{$i}</span>
+			<span>{$sms_coin}</span>
+			<span>{$v.Number}</span>
+			<span>
+				{eq name="v.State" value="0"}待审核{/eq}
+				{eq name="v.State" value="1"}审核中{/eq}
+				{eq name="v.State" value="2"}同意{/eq}
+			</span>
+		</li>
+		{/volist}
+	</ul>
+	{$sq->render()}
+</div>
+{/neq}
+
+
+
+
+
+
+
+{neq name="user" value="admin"}
+<script type="text/javascript">
+var user='{$user}';
+</script>
+<script type="text/javascript" src="/static/index/js/coin_dx_agent.js"></script>
+{/neq}
+
+
+{eq name="user" value="admin"}
+<script type="text/javascript" src="/static/index/js/coin_dx_admin.js"></script>
+{/eq}

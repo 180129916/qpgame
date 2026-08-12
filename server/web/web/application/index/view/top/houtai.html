@@ -1,0 +1,25 @@
+{layout name="public" /}
+<link rel="stylesheet" type="text/css" href="/static/index/css/houtai.css"/>
+
+<div class="list">
+	<h5>后台账号<a href="{:url('top/mima')}">修改密码</a></h5>
+	<div><span>账号：</span><input type="text" disabled value="{$Agentaccount}"></div>
+
+	{neq name="user" value="admin"}
+	<div><span>推荐码：</span><input type="text" value="{$agent.PromoCode}" disabled></div>
+	<div><span>昵称：</span><input type="text" name="nicheng" value="{$agent.nicheng}"></div>
+	<div><span>个性签名：</span><input type="text" name="sign" value="{$agent.sign}"></div>
+	<div><span>银行账号：</span><input type="number" name="Bank" value="{$agent.Bank}"></div>
+	<div><span>银行名称：</span><input type="text" name="OpenName" value="{$agent.OpenName}"></div>
+	<div><span>开户姓名：</span><input type="text" name="Name" value="{$agent.Name}"></div>
+	<div><span>微信：</span><input type="text" name="Wechat" value="{$agent.Wechat}"></div>
+	<div><span>QQ：</span><input type="number" name="QQ" value="{$agent.QQ}"></div>
+	<div><span>手机：</span><input type="number" name="TEL" value="{$agent.TEL}"></div>
+	
+	<button>保存</button>
+	{/neq}
+</div>
+
+{neq name="user" value="admin"}
+<script type="text/javascript" src="/static/index/js/houtai.js"></script>
+{/neq}
