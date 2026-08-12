@@ -50,7 +50,7 @@
 
 游戏要跑在公网上，别人才能访问，所以需要一台 Linux 云主机。
 
-> **云服务器推荐：莱卡云 👉 https://www.lcayun.com/aff/KRVFFSTN**
+> **云服务器推荐：莱卡云** 👉 [八折优惠](https://www.lcayun.com/aff/KRVFFSTN)
 > 性价比高、上手简单，新手买个基础款就够测试用了。
 
 买了之后，你会拿到：
